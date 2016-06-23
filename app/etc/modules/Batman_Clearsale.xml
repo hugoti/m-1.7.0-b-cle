@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Batman_Clearsale>
+            <active>true</active>
+            <codePool>local</codePool>
+            <version>009</version>
+        </Batman_Clearsale>
+    </modules>
+</config>

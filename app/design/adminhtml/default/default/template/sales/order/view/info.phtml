@@ -1,0 +1,301 @@
+<?php $_order = $this->getOrder() ?>
+<?php
+$orderAdminDate = $this->formatDate($_order->getCreatedAtDate(), 'medium', true);
+$orderStoreDate = $this->formatDate($_order->getCreatedAtStoreDate(), 'medium', true);
+?>
+<div class="box-left">
+    <!--Order Information-->
+    <div class="entry-edit">
+        <?php if ($_order->getEmailSent()):
+            $_email = Mage::helper('sales')->__('the order confirmation email was sent');
+        else:
+            $_email = Mage::helper('sales')->__('the order confirmation email is not sent');
+        endif; ?>
+        <div class="entry-edit-head">
+        <?php if ($this->getNoUseOrderLink()): ?>
+            <h4 class="icon-head head-account"><?php echo Mage::helper('sales')->__('Order # %s', $_order->getRealOrderId()) ?> (<?php echo $_email ?>)</h4>
+        <?php else: ?>
+            <a href="<?php echo $this->getViewUrl($_order->getId()) ?>"><?php echo Mage::helper('sales')->__('Order # %s', $_order->getRealOrderId()) ?></a>
+            <strong>(<?php echo $_email ?>)</strong>
+        <?php endif; ?>
+        </div>
+        <div class="fieldset">
+            <table cellspacing="0" class="form-list">
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Order Date') ?></label></td>
+                <td class="value"><strong><?php echo $orderAdminDate ?></strong></td>
+            </tr>
+            <?php if ($orderAdminDate != $orderStoreDate):?>
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Order Date (%s)', $_order->getCreatedAtStoreDate()->getTimezone()) ?></label></td>
+                <td class="value"><strong><?php echo $orderStoreDate ?></strong></td>
+            </tr>
+            <?php endif;?>
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Order Status') ?></label></td>
+                <td class="value"><strong><span id="order_status"><?php echo $_order->getStatusLabel() ?></span></strong></td>
+            </tr>
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Purchased From') ?></label></td>
+                <td class="value"><strong><?php echo $this->getOrderStoreName() ?></strong></td>
+            </tr>
+            <?php if($_order->getRelationChildId()): ?>
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Link to the New Order') ?></label></td>
+                <td class="value"><a href="<?php echo $this->getViewUrl($_order->getRelationChildId()) ?>">
+                    <?php echo $_order->getRelationChildRealId() ?>
+                </a></td>
+            </tr>
+            <?php endif; ?>
+            <?php if($_order->getRelationParentId()): ?>
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Link to the Previous Order') ?></label></td>
+                <td class="value"><a href="<?php echo $this->getViewUrl($_order->getRelationParentId()) ?>">
+                    <?php echo $_order->getRelationParentRealId() ?>
+                </a></td>
+            </tr>
+            <?php endif; ?>
+            <?php if($_order->getRemoteIp()): ?>
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('Placed from IP') ?></label></td>
+                <td class="value"><strong><?php echo $_order->getRemoteIp(); echo ($_order->getXForwardedFor())?' (' . $_order->getXForwardedFor() . ')':''; ?></strong></td>
+            </tr>
+            <?php endif; ?>
+            <?php if($_order->getGlobalCurrencyCode() != $_order->getBaseCurrencyCode()): ?>
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('%s / %s rate:', $_order->getGlobalCurrencyCode(), $_order->getBaseCurrencyCode()) ?></label></td>
+                <td class="value"><strong><?php echo $_order->getBaseToGlobalRate() ?></strong></td>
+            </tr>
+            <?php endif; ?>
+            <?php if($_order->getBaseCurrencyCode() != $_order->getOrderCurrencyCode()): ?>
+            <tr>
+                <td class="label"><label><?php echo Mage::helper('sales')->__('%s / %s rate:', $_order->getOrderCurrencyCode(), $_order->getBaseCurrencyCode()) ?></label></td>
+                <td class="value"><strong><?php echo $_order->getBaseToOrderRate() ?></strong></td>
+            </tr>
+            <?php endif; ?>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="box-right">
+    <!--Account Information-->
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-account"><?php echo Mage::helper('sales')->__('Account Information') ?></h4>
+            <div class="tools"><?php echo $this->getAccountEditLink()?></div>
+        </div>
+        <div class="fieldset">
+            <div class="hor-scroll">
+                <table cellspacing="0" class="form-list">
+                <tr>
+                    <td class="label"><label><?php echo Mage::helper('sales')->__('Customer Name') ?></label></td>
+                    <td class="value">
+                    <?php if ($_customerUrl=$this->getCustomerViewUrl()) : ?>
+                        <a href="<?php echo $_customerUrl ?>" target="_blank"><strong><?php echo $this->htmlEscape($_order->getCustomerName()) ?></strong></a>
+                    <?php else: ?>
+                        <strong><?php echo $this->htmlEscape($_order->getCustomerName()) ?></strong>
+                    <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label"><label><?php echo Mage::helper('sales')->__('Email') ?></label></td>
+                    <td class="value"><a href="mailto:<?php echo $_order->getCustomerEmail() ?>"><strong><?php echo $_order->getCustomerEmail() ?></strong></a></td>
+                </tr>
+                <?php if ($_groupName = $this->getCustomerGroupName()) : ?>
+                <tr>
+                    <td class="label"><label><?php echo Mage::helper('sales')->__('Customer Group') ?></label></td>
+                    <td class="value"><strong><?php echo $_groupName ?></strong></td>
+                </tr>
+                <?php endif; ?>
+                <?php foreach ($this->getCustomerAccountData() as $data):?>
+                <tr>
+                    <td class="label"><label><?php echo $data['label'] ?></label></td>
+                    <td class="value"><strong><?php echo $data['value'] ?></strong></td>
+                </tr>
+                <?php endforeach;?>
+		<tr>
+                    <td class="label"><label><a href="javascript:carregarFrame();">Carregar ClearSale</a></label></td>
+		    <td></td>
+		</tr>
+		<tr>
+                    <td class="value" colspan="2">
+			<?
+			$enderecoOk = true;
+			$endereco = $_order->getBillingAddress()->getStreet(1);
+			$separado = explode(",", $endereco, 2);
+			if(count($separado) != 2) {
+				//$enderecoOk = false;
+				$rua_cobranca = trim($_order->getBillingAddress()->getStreet(1));
+				$numero_cobranca = trim($_order->getBillingAddress()->getStreet(2));
+				$complemento_cobranca = trim($_order->getBillingAddress()->getStreet(3));
+				$bairro_cobranca = trim($_order->getBillingAddress()->getStreet(4));
+			} else {
+				$rua_cobranca = trim($separado[0]);
+				$resto = trim($separado[1]);
+				if(strpos($resto, ",")) {
+				  $array = explode(",", $resto, 2);
+				  $numero_cobranca = $array[0];
+				  $complemento_cobranca = $array[1];
+				} else if(strpos($resto, " ")) {
+				  $array = explode(" ", $resto, 2);
+				  $numero_cobranca = $array[0];
+				  $complemento_cobranca = $array[1];
+				} else {
+				  $numero_cobranca = $resto;
+				}
+				$complemento_cobranca .= " ". $_order->getBillingAddress()->getStreet(2);
+			}
+
+			$endereco = $_order->getShippingAddress()->getStreet(1);
+			$separado = explode(",", $endereco, 2);
+			if(count($separado) != 2) {
+				//$enderecoOk = false;
+				$rua_entrega = trim($_order->getShippingAddress()->getStreet(1));
+				$numero_entrega = trim($_order->getShippingAddress()->getStreet(2));
+				$complemento_entrega = trim($_order->getShippingAddress()->getStreet(3));
+				$bairro_entrega = trim($_order->getShippingAddress()->getStreet(4));
+			} else {
+				$rua_entrega = trim($separado[0]);
+				$resto = trim($separado[1]);
+				if(strpos($resto, ",")) {
+				  $array = explode(",", $resto, 2);
+				  $numero_entrega = $array[0];
+				  $complemento_entrega = $array[1];
+				} else if(strpos($resto, " ")) {
+				  $array = explode(" ", $resto, 2);
+				  $numero_entrega = $array[0];
+				  $complemento_entrega = $array[1];
+				} else {
+				  $numero_entrega = $resto;
+				}
+				$complemento_entrega .= " ". $_order->getShippingAddress()->getStreet(2);
+			}
+
+			$telefone_ddd = $_order->getBillingAddress()->getData('telephone');
+			//Testando o padrão (xx) xxxxxxxx
+			$pos1 = strpos($telefone_ddd, ")");
+			if ($pos1 !== false) {
+				$vet = explode($telefone_ddd, ")");
+				$ddd = trim(str_replace("(", "", $vet[0]));
+				$telefone = trim($vet[1]);
+			} else {
+				//Padrão xx-xxxx xxxx
+				$pos1 = strpos($telefone_ddd, "-");
+				if ($pos1 !== false) {
+					$ddd = trim(substr($telefone_ddd, 0, $pos1));
+					$telefone = trim(substr($telefone_ddd, $pos1 + 1));
+				} else {
+					//Padrão com espaços separadores xx xxxx xxxx
+					$pos1 = strpos($telefone_ddd, " ");
+					if ($pos1 !== false) {
+						$ddd = trim(substr($telefone_ddd, 0, $pos1));
+						$telefone = trim(substr($telefone_ddd, $pos1 + 1));
+					} else
+						$telefone = $telefone_ddd;
+				}
+			}
+			$total = number_format($_order->getBaseGrandTotal(), 2, ",", ".");
+
+			//Tipo de pagamento:			
+			$metodoPagamento = $_order->getPayment()->getMethod();
+			switch($metodoPagamento) {
+			  case "cielo":
+				$bandeira = $_order->getPayment()->getCcType();
+				//Convertendo para o padrão Clearsale:
+				switch($bandeira) {
+				  case "DI": $cartao="1";break;
+				  case "MC": $cartao="2";break;
+				  case "VI": $cartao="3";break;
+				  case "VD": $cartao="3";break;
+				  case "VD": $cartao="3";break;
+				  default:$cartao="4";
+				}
+				$parcelas = $_order->getPayment()->getCcSsIssue();
+				if($parcelas == "A")
+				  $parcelas = 1;
+				$tipoPagamento = "TipoPagamento=1&Parcelas=$parcelas&TipoCartao=$cartao&";
+			  break;
+			  case "ipagare":
+				$tipoPagamento = $_order->getPaymentHtml();
+				$nroParcelas = 1;
+				if(strpos($tipoPagamento, "Cartão de Crédito") !== false) {
+					$codPagamento = 1;
+					$tipoCartao = 3; //Visa
+					if(strpos($tipoPagamento, "Parcelamento") !== false) {
+						$vet = explode($tipoPagamento, "(");
+						$nroParcelas = substr(trim($vet[2]), 0, 1);
+					}
+					$tipoPagamento = "TipoPagamento=1&Parcelas=$nroParcelas&";
+				} else if(strpos($tipoPagamento, "Boleto") !== false) {
+					$tipoPagamento = "TipoPagamento=2&Parcelas=1&";
+				} else if(strpos($tipoPagamento, "Depósito Bancário") !== false) {
+					$tipoPagamento = "TipoPagamento=6&Parcelas=1&";
+				}
+			  break;
+			  case "checkmo":
+			  default:
+				//Dinheiro/Cheque, usa por definição transferência bancaria.
+				$tipoPagamento = "TipoPagamento=6&Parcelas=1&";
+			  break;
+			}
+                        
+                        $codigoIntegracao = Mage::getStoreConfig('clearsale/general/codigo_integracao');
+
+			$ambiente = Mage::getStoreConfig('clearsale/general/environment');
+			if($ambiente == "production")
+			    $url = "http://clearsale.com.br/integracaov2/FreeClearSale/frame.aspx";
+			else
+			    $url = "http://homologacao.clearsale.com.br/integracaov2/FreeClearSale/frame.aspx";
+
+                        if($codigoIntegracao == false) {
+                            echo "<b>Código de Integração da Clearsale não configurado!</b><br/>Por favor configure-o em Sistema -> Configurações.";
+                        } else if($enderecoOk == false) {
+				echo "<b>Endereço não formatado corretamente!</b><br/>Altere as configurações do endereço de cobrança e entrega para que fique no formato: Rua Brasil, 35 Ap 301";
+			} else {
+			?> 
+			<script>
+			function carregarFrame() {
+			  var iframe = document.getElementById("clearsale");
+			  iframe.src = "<?php echo $url;?>?CodigoIntegracao=<?php echo $codigoIntegracao;?>&PedidoID=<?php echo $_order->getRealOrderId();?>&Data=<?php echo $orderAdminDate;?>&IP=<?php echo $_order->getRemoteIp();?>&Total=<?php echo $total ?>&<?php echo $tipoPagamento;?>Cobranca_Nome=<?php echo $_order->getCustomerName() ?>&Cobranca_Email=<?php echo $_order->getCustomerEmail() ?>&Cobranca_Documento=<?php echo $_order->getCustomerTaxvat() ?>&Cobranca_Logradouro=<?php echo $rua_cobranca ?>&Cobranca_Logradouro_Numero=<?php echo $numero_cobranca ?>&Cobranca_Logradouro_Complemento=<?php echo $complemento_cobranca ?>&Cobranca_Bairro=<?php echo $bairro_cobranca ?>&Cobranca_Cidade=<?php echo $_order->getBillingAddress()->getData('city') ?>&Cobranca_Estado=<?php echo $_order->getBillingAddress()->getData('region') ?>&Cobranca_CEP=<?php echo $_order->getBillingAddress()->getData('postcode') ?>&Cobranca_Pais=<?php echo $_order->getBillingAddress()->getData('country_id') ?>&Cobranca_DDD_Telefone=<?php echo $ddd ?>&Cobranca_Telefone=<?php echo $telefone ?>&Entrega_Nome=<?php echo $_order->getCustomerName() ?>&Entrega_Email=<?php echo $_order->getCustomerEmail() ?>&Entrega_Documento=<?php echo $_order->getCustomerTaxvat() ?>&Entrega_Logradouro=<?php echo $rua_entrega ?>&Entrega_Logradouro_Numero=<?php echo $numero_entrega ?>&Entrega_Logradouro_Complemento=<?php echo $complemento_entrega ?>&Entrega_Bairro=<?php echo $bairro_entrega ?>&Entrega_Cidade=<?php echo $_order->getShippingAddress()->getData('city') ?>&Entrega_Estado=<?php echo $_order->getShippingAddress()->getData('region') ?>&Entrega_CEP=<?php echo $_order->getShippingAddress()->getData('postcode') ?>&Entrega_Pais=<?php echo $_order->getShippingAddress()->getData('country_id') ?>&Entrega_DDD_Telefone=<?php echo $ddd ?>&Entrega_Telefone=<?php echo $telefone ?>";
+			} 
+			</script>
+                    	<iframe id="clearsale" src="" width="280" height="85" frameborder="0" scrolling="no"><P>Seu Browser não
+suporta iframes</P></iframe>
+			<?
+			} ?>
+                    </td>
+                </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+
+<div class="box-left">
+    <!--Billing Address-->
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-billing-address"><?php echo Mage::helper('sales')->__('Billing Address') ?></h4>
+            <div class="tools"><?php echo $this->getAddressEditLink($_order->getBillingAddress())?></div>
+        </div>
+        <fieldset>
+            <address><?php echo $_order->getBillingAddress()->getFormated(true) ?></address>
+        </fieldset>
+    </div>
+</div>
+<?php if (!$this->getOrder()->getIsVirtual()): ?>
+<div class="box-right">
+    <!--Shipping Address-->
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-shipping-address"><?php echo Mage::helper('sales')->__('Shipping Address') ?></h4>
+            <div class="tools"><?php echo $this->getAddressEditLink($_order->getShippingAddress())?></div>
+        </div>
+        <fieldset>
+            <address><?php echo $_order->getShippingAddress()->getFormated(true) ?></address>
+        </fieldset>
+    </div>
+</div>
+<div class="clear"></div>
+<?php endif; ?>

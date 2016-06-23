@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+        <batman translate="label" module="clearsale">
+            <label>Batman</label>
+            <sort_order>180</sort_order>
+        </batman>
+    </tabs>
+    <sections>
+        <clearsale translate="label" module="clearsale">
+            <label>Clearsale</label>
+            <tab>batman</tab>
+            <sort_order>100</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general translate="label comment" module="clearsale">
+                    <label>General Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>5</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <codigo_integracao translate="label">
+                            <label>Código de Integração</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </codigo_integracao>
+			<environment translate="label">
+			    <label>Ambiente</label>
+			    <frontend_type>select</frontend_type>
+			    <source_model>Clearsale_Environment</source_model>
+			    <sort_order>11</sort_order>
+			    <show_in_default>1</show_in_default>
+			    <show_in_website>1</show_in_website>
+			    <show_in_store>0</show_in_store>
+			</environment>
+                    </fields>
+                </general>				
+            </groups>                        
+        </clearsale>
+    </sections>
+</config>
+
