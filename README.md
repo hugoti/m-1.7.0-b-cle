@@ -1,6 +1,6 @@
-# ClearSale module for Magento 1.6 to 1.9.2.4
+# ClearSale module for Magento 1.6.2.0 to 1.9.2.4
 
-Anti-fraud module of clearsale for magento version 1.6 to 1.9.2.4.
+Anti-fraud module of clearsale for magento version 1.6.2.0 to 1.9.2.4.
 
 ### Installation
 
