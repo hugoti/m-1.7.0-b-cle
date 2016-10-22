@@ -1,5 +1,13 @@
-English description:
-Anti-fraud verification module "ClearSale" for the magento 1.6 up to version 1.9.2.4.
+# ClearSale module for Magento 1.6 to 1.9.2.4
 
-Descrição em Português:
-Módulo de verificação anti-fraude “ClearSale” para o magento 1.6 até a versão 1.9.2.4.
+Anti-fraud module of clearsale for magento version 1.6 to 1.9.2.4.
+
+### Installation
+
+* Copy the folder app with other folders and files into the app.
+* Default permissions for files and other folders.
+
+### Note
+
+To use the module you must have user account and password provided and approved by ClearSale as well as owning the service enabled with ClearSale.
+
